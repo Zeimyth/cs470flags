@@ -17,7 +17,7 @@ RUNNING
 
 How to run the client
 - cd client
-- ./client -p <port>
+- ./client <url> -p <port>
 
 How to run the server
 - cd server
