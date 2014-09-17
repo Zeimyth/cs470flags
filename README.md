@@ -19,4 +19,5 @@ How to run the client
 - (incomplete)
 
 How to run the server
-- (incomplete)
+- cd server
+- ./bin/bzrflag
