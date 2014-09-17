@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 def _get_parser():
 	parser = ArgumentParser(description='Run a BZRFlags client.')
