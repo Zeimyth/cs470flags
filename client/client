@@ -9,8 +9,9 @@ def _get_parser():
 
 if __name__ == "__main__":
 	from argparse import ArgumentParser
+	from net.server import ServerProxy
 
 	parser = _get_parser()
 	args = parser.parse_args()
 
-	print 'port {0}'.format(args.port)
+	server = ServerProxy(args.port)

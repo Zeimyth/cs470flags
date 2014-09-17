@@ -17,7 +17,7 @@ RUNNING
 
 How to run the client
 - cd client
-- python client.py -p <port>
+- ./client -p <port>
 
 How to run the server
 - cd server
