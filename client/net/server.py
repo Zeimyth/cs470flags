@@ -116,7 +116,7 @@ class Socket(object):
 
 		splitResponse = response[responseLine].split(' ', 1)
 
-		if (splitResponse[0] == Socket.OK_RESPONSE):
+		if splitResponse[0] == Socket.OK_RESPONSE:
 			return OkResponse(splitResponse[1:])
 		else:
 			return FailResponse(splitResponse[1:])
@@ -143,9 +143,14 @@ class Socket(object):
 
 		while 1:
 			data = self.socket.recv(self.RECV_SIZE)
+
+			if self._debug:
+				print 'Socket: Receive loop, received "{0}"'.format(data)
+
 			if not data.startswith(Socket.ACKNOWLEDGE):
 				fullResponse += data
-				if any([data.startswith(eom) for eom in Socket.END_OF_MESSAGE_LIST]):
+				lastLine = data.strip().split('\n')[-1]
+				if any([lastLine.startswith(eom) for eom in Socket.END_OF_MESSAGE_LIST]):
 					break
 
 		fullResponse = fullResponse.strip()
