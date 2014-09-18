@@ -26,14 +26,14 @@ class ServerProxy(object):
 	"""
 	def shoot(self, tank):
 		if self._debug:
-			'ServerProxy: Ordering tank {0} to shoot'.format(tank)
+			print 'ServerProxy: Ordering tank {0} to shoot'.format(tank)
 
 		response = self.socket.sendExpectStandardResponse('shoot {0}'.format(tank))
 
 		if self._debug:
-			'ServerProxy: Response for shoot order = {0}'.format(response)
+			print 'ServerProxy: Response for shoot order = {0}'.format(response)
 		elif not response.isOk():
-			'ServerProxy: Attempted to shoot tank {0}, but it hasn\'t reloaded yet'.format(tank)
+			print 'ServerProxy: Attempted to shoot tank {0}, but it hasn\'t reloaded yet'.format(tank)
 
 		return response
 
