@@ -3,16 +3,52 @@
 import socket
 import sys
 
-class ServerProxy:
+from response import *
+
+class ServerProxy(object):
 
 	def __init__(self, url, port):
-		self.socket = Socket(url, port)
 		self._debug = True
 
+		self.socket = Socket(url, port)
 
 
-class Socket:
-	RECV_SIZE = 1024
+	""" Orders tank #(tank) to shoot.
+		If the tank shoots, the server sends back a standard acknowledge response, e.g.
+
+		ack <timestamp> shoot <tank>
+		ok
+
+		This response is received regardless of whether a valid tank was asked to shoot.
+
+		When a tank is asked to shoot too quickly after the last time it fired, an empty
+		Fail response is received.
+	"""
+	def shoot(self, tank):
+		if self._debug:
+			'ServerProxy: Ordering tank {0} to shoot'.format(tank)
+
+		response = self.socket.sendExpectStandardResponse('shoot {0}'.format(tank))
+
+		if self._debug:
+			'ServerProxy: Response for shoot order = {0}'.format(response)
+		elif not response.isOk():
+			'ServerProxy: Attempted to shoot tank {0}, but it hasn\'t reloaded yet'.format(tank)
+
+		return response
+
+
+
+class Socket(object):
+	RECV_SIZE = 4096
+
+	ACKNOWLEDGE = 'awk'
+	GREETING = 'bzrobots 1'
+	OK_RESPONSE = 'ok'
+	FAIL_RESPONSE = 'fail'
+	LIST_END = 'end'
+
+	END_OF_MESSAGE_LIST = [GREETING, OK_RESPONSE, FAIL_RESPONSE, LIST_END]
 
 	def __init__(self, url, port):
 		self.url = url
@@ -26,19 +62,19 @@ class Socket:
 		if self._debug:
 			print 'Socket: Establishing connection to server {0} at port {1}'.format(self.url, self.port)
 
-		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 		try:
+			self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			self.socket.connect((self.url, self.port))
 
-			greeting = self.socket.recv(self.RECV_SIZE).strip()
+			greeting = self._receive()
 
-			if greeting != 'bzrobots 1':
+			if greeting != Socket.GREETING:
 				print ('Socket: Invalid greeting received from server {0} at port {1}: {2}'
 					.format(self.url, self.port, greeting))
+				sys.exit(1)
 			else:
 				message = 'agent 1'
-				self.send(message, False)
+				self.sendExpectNoResponse(message)
 
 		except socket.error as e:
 			print ('Socket: Error occurred while attempting to establish connection with server {0} at port {1}: {2}'
@@ -57,21 +93,66 @@ class Socket:
 		self.socket.close()
 
 
-	def send(self, message, listen=True):
-		if self._debug:
-			print 'Socket: Sending "{0}"'.format(message)
+	def sendExpectNoResponse(self, message):
+		self._handleSend(message, False)
 
-		self.socket.send(message)
+
+	def sendIgnoreResponse(self, message):
+		self._handleSend(message, True)
+
+
+	def sendExpectStandardResponse(self, message):
+		response = self._handleSend(message, True)
+		lines = response.split('\n')
+
+		responseLine = 0
+		if lines[responseLine].startswith(Socket.ACKNOWLEDGE):
+			if lines[responseLine].endswith(message):
+				responseLine += 1
+			else:
+				print ('Socket: ERROR: Received acknowledge line that doesn\'t match message. ' +
+					'Message = "{0}", Response = "{1}"').format(message, response)
+				return FailResponse([])
+
+		splitResponse = response[responseLine].split(' ', 1)
+
+		if (splitResponse[0] == Socket.OK_RESPONSE):
+			return OkResponse(splitResponse[1:])
+		else:
+			return FailResponse(splitResponse[1:])
+
+
+	def _handleSend(self, message, listen):
+		self._send(message)
 
 		if not listen:
 			return
 		else:
-			data = self.socket.recv(1024)
+			return self._receive()
 
-			if self._debug:
-				print 'Socket: Received "{0}"'.format(data)
 
-			return message
+	def _send(self, message):
+		if self._debug:
+			print 'Socket: Sending "{0}"'.format(message)
+
+		self.socket.send(message + '\n')
+
+
+	def _receive(self):
+		fullResponse = ''
+
+		while 1:
+			data = self.socket.recv(self.RECV_SIZE)
+			if not data.startswith(Socket.ACKNOWLEDGE):
+				fullResponse += data
+				if any([data.startswith(eom) for eom in Socket.END_OF_MESSAGE_LIST]):
+					break
+
+		fullResponse = fullResponse.strip()
+		if self._debug:
+			print 'Socket: Received "{0}"'.format(fullResponse)
+
+		return fullResponse
 
 
 	def __del__(self):
