@@ -89,6 +89,18 @@ class Socket(object):
 			return FailResponse(splitResponse[1:])
 
 
+	def sendExpectListResponse(self, message):
+		response = self._handleSend(message, True)
+		lines = response.split('\n')
+
+		# Response format:
+		# awk ...
+		# begin
+		# (list elements) ...
+		# end
+		return ListResponse(lines[2:-1])
+
+
 	def _handleSend(self, message, listen):
 		self._send(message)
 

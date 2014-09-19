@@ -64,3 +64,17 @@ class FailResponse(SingleLineResponse):
 
 	def isOk(self):
 		return False
+
+
+
+class ListResponse(object):
+	def __init__(self, messageArray):
+		self._messageList = messageArray
+
+
+	def getList(self):
+		return self._messageList
+
+
+	def __str__(self):
+		return '{0}'.format(self._messageList)
