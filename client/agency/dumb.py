@@ -6,8 +6,10 @@ class DumbAgency:
 	def __init__(self, server):
 		self.server = server
 		self.agents = []
-		self.agents.append(DumbAgent())
-		self.agents.append(DumbAgent())
+
+		for tank in self.server.listFriendlyTanks():
+			self.agents.append(DumbAgent())
+
 		while True:
 			self._takeAction()
 
