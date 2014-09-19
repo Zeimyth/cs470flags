@@ -163,6 +163,6 @@ class ServerProxy(object):
 		response = self.socket.sendExpectListResponse('othertanks')
 
 		if self._debug:
-			print 'ServerProxy: Response for listEnemyTanks request = {0}'
+			print 'ServerProxy: Response for listEnemyTanks request = {0}'.format(response)
 
 		return EnemyTank.parseList(response.getList())
