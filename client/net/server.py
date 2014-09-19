@@ -57,6 +57,23 @@ class ServerProxy(object):
 		return response
 
 
+	def setTurnRate(self, tank, rate):
+		if self._debug:
+			print 'ServerProxy: Ordering tank {0} to set turn rate to {1}'.format(tank, rate)
+
+		if rate > 1:
+			print 'ServerProxy: Limiting tank turn rate to 1'
+			rate = 1
+		elif rate < -1:
+			print 'ServerProxy: Limiting tank turn rate to -1'
+			rate = -1
+
+		response = self.socket.sendExpectStandardResponse('angvel {0} {1}'.format(tank, rate))
+
+		if self._debug:
+			print 'ServerProxy: Response for setTurnRate order = {0}'.format(response)
+
+
 
 class Socket(object):
 	RECV_SIZE = 4096
@@ -126,7 +143,7 @@ class Socket(object):
 
 		responseLine = 0
 		if lines[responseLine].startswith(Socket.ACKNOWLEDGE):
-			# setVelocity 1 comes back as 1.0
+			# setVelocity or setTurnRate 1 comes back as 1.0
 			if lines[responseLine].endswith(message):
 				responseLine += 1
 			else:
