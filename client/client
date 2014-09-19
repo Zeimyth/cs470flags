@@ -11,8 +11,11 @@ def _get_parser():
 if __name__ == "__main__":
 	from argparse import ArgumentParser
 	from net.server import ServerProxy
-
+	import sys
+	from agency.dumb import DumbAgency
+	print sys.path
 	parser = _get_parser()
 	args = parser.parse_args()
 
 	server = ServerProxy(args.url, args.port)
+	DumbAgency(server)
