@@ -9,6 +9,7 @@ import bzrsocket
 
 from data.base import Base
 from data.bullet import Bullet
+from data.constants import Constants
 from data.enemytank import EnemyTank
 from data.flag import Flag
 from data.friendlytank import FriendlyTank
@@ -166,3 +167,18 @@ class ServerProxy(object):
 			print 'ServerProxy: Response for listEnemyTanks request = {0}'.format(response)
 
 		return EnemyTank.parseList(response.getList())
+
+
+	def listConstants(self):
+		if self._debug:
+			print 'ServerProxy: Sending listContants request'
+
+		response = self.socket.sendExpectListResponse('constants')
+
+		if self._debug:
+			print 'ServerProxy: Response for listConstants request = {0}'.format(response)
+
+		return Constants.parseList(response.getList())
+
+
+	#def getSurroundings(self, tank):
