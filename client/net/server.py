@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 import bzrsocket
 
 from data.base import Base
+from data.flag import Flag
 from data.friendlytank import FriendlyTank
 from data.obstacle import Obstacle
 from data.team import Team
@@ -127,3 +128,15 @@ class ServerProxy(object):
 			print 'ServerProxy: Response for listBases request = {0}'.format(response)
 
 		return Base.parseList(response.getList())
+
+
+	def listFlags(self):
+		if self._debug:
+			print 'ServerProxy: Sending listFlags request'
+
+		response = self.socket.sendExpectListResponse('flags')
+
+		if self._debug:
+			print 'ServerProxy: Response for listFlags request = {0}'.format(response)
+
+		return Flag.parseList(response.getList())
