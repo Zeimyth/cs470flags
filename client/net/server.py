@@ -6,9 +6,11 @@ import os.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
 import bzrsocket
-from data.team import Team
-from data.obstacle import Obstacle
+
+from data.base import Base
 from data.friendlytank import FriendlyTank
+from data.obstacle import Obstacle
+from data.team import Team
 
 class ServerProxy(object):
 
@@ -110,6 +112,18 @@ class ServerProxy(object):
 		response = self.socket.sendExpectListResponse('mytanks')
 
 		if self._debug:
-			print 'ServerProxy: Response for ListFriendlyTanks request = {0}'.format(response)
+			print 'ServerProxy: Response for listFriendlyTanks request = {0}'.format(response)
 
 		return FriendlyTank.parseList(response.getList())
+
+
+	def listBases(self):
+		if self._debug:
+			print 'ServerProxy: Sending listBases request'
+
+		response = self.socket.sendExpectListResponse('bases')
+
+		if self._debug:
+			print 'ServerProxy: Response for listBases request = {0}'.format(response)
+
+		return Base.parseList(response.getList())
