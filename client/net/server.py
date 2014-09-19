@@ -38,6 +38,25 @@ class ServerProxy(object):
 		return response
 
 
+	def setVelocity(self, tank, speed):
+		if self._debug:
+			print 'ServerProxy: Ordering tank {0} to set velocity to {1}'.format(tank, speed)
+
+		if speed > 1:
+			print 'ServerProxy: Limiting tank speed to 1'
+			speed = 1
+		elif speed < -1:
+			print 'ServerProxy: Limiting tank speed to -1'
+			speed = -1
+
+		response = self.socket.sendExpectStandardResponse('speed {0} {1}'.format(tank, speed))
+
+		if self._debug:
+			print 'ServerProxy: Response for setVelocity order = {0}'.format(response)
+
+		return response
+
+
 
 class Socket(object):
 	RECV_SIZE = 4096
@@ -107,6 +126,7 @@ class Socket(object):
 
 		responseLine = 0
 		if lines[responseLine].startswith(Socket.ACKNOWLEDGE):
+			# setVelocity 1 comes back as 1.0
 			if lines[responseLine].endswith(message):
 				responseLine += 1
 			else:
