@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 
+import sys
+import os.path
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
 import bzrsocket
+from data.team import Team
 
 class ServerProxy(object):
 
@@ -69,3 +75,15 @@ class ServerProxy(object):
 
 		if self._debug:
 			print 'ServerProxy: Response for setTurnRate order = {0}'.format(response)
+
+
+	def listTeams(self):
+		if self._debug:
+			print 'ServerProxy: Sending listTeams request'
+
+		response = self.socket.sendExpectListResponse('teams')
+
+		if self._debug:
+			print 'ServerProxy: Response for listTeams request = {0}'.format(response)
+
+		return Team.parseList(response.getList())
