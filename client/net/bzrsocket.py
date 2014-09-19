@@ -125,7 +125,3 @@ class Socket(object):
 			print 'Socket: Received "{0}"'.format(fullResponse)
 
 		return fullResponse
-
-
-	def __del__(self):
-		self._close_socket()
