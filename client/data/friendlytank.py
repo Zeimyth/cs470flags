@@ -23,8 +23,8 @@ class FriendlyTank(object):
 		self.shotsAvailable = int(tankList[3])
 		self.reloadTime = float(tankList[4])
 		self.flag = tankList[5]
-		self.x = int(tankList[6])
-		self.y = int(tankList[7])
+		self.x = float(tankList[6])
+		self.y = float(tankList[7])
 		self.angle = float(tankList[8])
 		self.vx = float(tankList[9])
 		self.vy = float(tankList[10])
