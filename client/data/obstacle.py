@@ -17,7 +17,7 @@ class Obstacle:
 
 	def __init__(self, obstacleList):
 		coordinateTupleList = zip(obstacleList[0::2], obstacleList[1::2])
-		self._points = [Point(coord[0], coord[1]) for coord in coordinateTupleList]
+		self._points = [Point(float(coord[0]), float(coord[1])) for coord in coordinateTupleList]
 
 
 	def __str__(self):
