@@ -7,7 +7,8 @@ class DumbAgent:
 		self.moveTimes = []
 		self.moveList = {}
 		self._dumbCycle("start")
-	
+		self._shoot()
+
 	def _dumbCycle(self, lastMove):
 		now = time.time()
 		self.moveTimes.append(now)
@@ -22,6 +23,13 @@ class DumbAgent:
 			self.moveList[moveLength] = "stopMove"
 		self.moveTimes.sort()
 
+	def _shoot(self):
+		now = time.time()
+		shootTime = now + random.randint(1,4)
+		self.moveTimes.append(shootTime)
+		self.moveList[shootTime] = "shoot"
+		self.moveTimes.sort()
+
 	def getAction(self):
 		now = time.time()
 		if self.moveTimes[0] > now:
@@ -34,4 +42,6 @@ class DumbAgent:
 				self._dumbCycle("turn")
 			elif action == "stopMove":
 				self._dumbCycle("move")
+			elif action == "shoot":
+				self._shoot()
 			return action

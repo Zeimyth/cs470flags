@@ -20,10 +20,12 @@ class DumbAgency:
 				print "Action" + action + str(i)
 			if action == "move":
 				self.server.setVelocity(i, 1)
-			if action == "stopMove":
+			elif action == "stopMove":
 				self.server.setVelocity(i, 0)
-			if action == "turn":
+			elif action == "turn":
 				self.server.setTurnRate(i, 1)
-			if action == "stopTurn":
+			elif action == "stopTurn":
 				self.server.setTurnRate(i, 0)
-		
+			elif action == "shoot":
+				self.server.shoot(i)
+
