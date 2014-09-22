@@ -3,6 +3,9 @@ class Point(object):
 		self.x = x
 		self.y = y
 
+	def toTuple(self):
+		return tuple([self.x, self.y])
+
 
 	def __str__(self):
 		return '({0}, {1})'.format(self.x, self.y)

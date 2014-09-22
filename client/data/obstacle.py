@@ -19,6 +19,8 @@ class Obstacle:
 		coordinateTupleList = zip(obstacleList[0::2], obstacleList[1::2])
 		self._points = [Point(float(coord[0]), float(coord[1])) for coord in coordinateTupleList]
 
+	def toTupleList(self):
+		return tuple([point.toTuple() for point in self._points])
 
 	def __str__(self):
 		return 'Obstacle({0})'.format(['{0}'.format(point) for point in self._points])
