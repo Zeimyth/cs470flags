@@ -20,10 +20,7 @@ class FieldAgent:
 			deltaY += vector[1]
 
 		if config.debugLevelEnabled(config.TRACE):
-			print "DeltaX"
-			print deltaX
-			print "DeltaY"
-			print deltaY
+			print "DeltaX = {0}, DeltaY = {1}".format(deltaX, deltaY)
 
 		angle, magnitude = self._deltaToVelocity(deltaX, deltaY)
 		return angle, magnitude
@@ -62,12 +59,8 @@ class FieldAgent:
 			speed = copysign(.5, angle)
 
 		if config.debugLevelEnabled(config.TRACE):
-			print "Desired angle"
-			print newAngle
-			print "Angle"
-			print angle
-			print "Speed"
-			print speed
+			print "Desired angle = {0:.2f}, Angle = {1:.2f}, Speed = {2:.2f}".format(
+				newAngle, angle, speed)
 
 		self.moveTimes.append(now)
 		self.moveList[now] = tuple(["turn", speed])
