@@ -1,7 +1,12 @@
 #/usr/bin/env python
 
+import os
 import sys
 import socket
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
+import config
 
 from response import *
 
@@ -19,13 +24,12 @@ class Socket(object):
 	def __init__(self, url, port):
 		self.url = url
 		self.port = port
-		self._debug = True
 
 		self._initialize_socket()
 
 
 	def _initialize_socket(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.INFO):
 			print 'Socket: Establishing connection to server {0} at port {1}'.format(self.url, self.port)
 
 		try:
@@ -35,25 +39,27 @@ class Socket(object):
 			greeting = self._receive()
 
 			if greeting != Socket.GREETING:
-				print ('Socket: Invalid greeting received from server {0} at port {1}: {2}'
-					.format(self.url, self.port, greeting))
+				if config.debugLevelEnabled(config.ERROR):
+					print ('Socket: Invalid greeting received from server {0} at port {1}: {2}'
+						.format(self.url, self.port, greeting))
 				sys.exit(1)
 			else:
 				message = 'agent 1'
 				self.sendExpectNoResponse(message)
 
 		except socket.error as e:
-			print ('Socket: Error occurred while attempting to establish connection with server {0} at port {1}: {2}'
-				.format(self.url, self.port, e))
+			if config.debugLevelEnabled(config.ERROR):
+				print ('Socket: Error occurred while attempting to establish connection with server {0} at port {1}: {2}'
+					.format(self.url, self.port, e))
 
 			sys.exit(1)
 
-		if self._debug:
+		if config.debugLevelEnabled(config.INFO):
 			print 'Socket: Connection successfully established'
 
 
 	def _close_socket(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.INFO):
 			print 'Socket: Closing connection'
 
 		self.socket.close()
@@ -77,8 +83,9 @@ class Socket(object):
 			if lines[responseLine].endswith(message):
 				responseLine += 1
 			else:
-				print ('Socket: ERROR: Received acknowledge line that doesn\'t match message. ' +
-					'Message = "{0}", Response = "{1}"').format(message, response)
+				if config.debugLevelEnabled(config.WARN):
+					print ('Socket: WARN: Received acknowledge line that doesn\'t match message. ' +
+						'Message = "{0}", Response = "{1}"').format(message, response)
 				return FailResponse([])
 
 		splitResponse = response[responseLine].split(' ', 1)
@@ -111,7 +118,7 @@ class Socket(object):
 
 
 	def _send(self, message):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'Socket: Sending "{0}"'.format(message)
 
 		self.socket.send(message + '\n')
@@ -123,7 +130,7 @@ class Socket(object):
 		while 1:
 			data = self.socket.recv(self.RECV_SIZE)
 
-			if self._debug:
+			if config.debugLevelEnabled(config.TRACE):
 				print 'Socket: Receive loop, received "{0}"'.format(data)
 
 			if not data.startswith(Socket.ACKNOWLEDGE):
@@ -133,7 +140,7 @@ class Socket(object):
 					break
 
 		fullResponse = fullResponse.strip()
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'Socket: Received "{0}"'.format(fullResponse)
 
 		return fullResponse

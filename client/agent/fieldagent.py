@@ -1,3 +1,8 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.relpath('..'))))
+import config
+
 import time
 from math import atan2, degrees, copysign
 
@@ -13,10 +18,13 @@ class FieldAgent:
 		for vector in vectorList:
 			deltaX += vector[0]
 			deltaY += vector[1]
-		print "DeltaX"
-		print deltaX
-		print "DeltaY"
-		print deltaY
+
+		if config.debugLevelEnabled(config.TRACE):
+			print "DeltaX"
+			print deltaX
+			print "DeltaY"
+			print deltaY
+
 		angle, magnitude = self._deltaToVelocity(deltaX, deltaY)
 		return angle, magnitude
 
@@ -52,12 +60,15 @@ class FieldAgent:
 		else:		
 			#speed = (angle/18) * .1 + .2
 			speed = copysign(.5, angle)
-		print "Desired angle"
-		print newAngle
-		print "Angle"
-		print angle
-		print "Speed"
-		print speed
+
+		if config.debugLevelEnabled(config.TRACE):
+			print "Desired angle"
+			print newAngle
+			print "Angle"
+			print angle
+			print "Speed"
+			print speed
+
 		self.moveTimes.append(now)
 		self.moveList[now] = tuple(["turn", speed])
 		#self.moveTimes.append(stop)
@@ -66,8 +77,11 @@ class FieldAgent:
 
 	def getAction(self, fieldList, status):
 		now = time.time()
-		print "my angle"
-		print degrees(status.angle)
+
+		if config.debugLevelEnabled(config.TRACE):
+			print "my angle"
+			print degrees(status.angle)
+
 		if len(self.moveTimes) == 0:
 			vectorList = self._createVectors(fieldList, status.x, status.y)
 			newAngle, newVelocity = self._calcVector(vectorList)

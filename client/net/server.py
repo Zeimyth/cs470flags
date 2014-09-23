@@ -6,6 +6,7 @@ import os.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
 import bzrsocket
+import config
 
 from data.base import Base
 from data.bullet import Bullet
@@ -19,8 +20,6 @@ from data.team import Team
 class ServerProxy(object):
 
 	def __init__(self, url, port):
-		self._debug = True
-
 		self.socket = bzrsocket.Socket(url, port)
 
 
@@ -36,21 +35,21 @@ class ServerProxy(object):
 		Fail response is received.
 	"""
 	def shoot(self, tank):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Ordering tank {0} to shoot'.format(tank)
 
 		response = self.socket.sendExpectStandardResponse('shoot {0}'.format(tank))
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for shoot order = {0}'.format(response)
-		elif not response.isOk():
+		elif not response.isOk() and config.debugLevelEnabled(config.ERROR):
 			print 'ServerProxy: Attempted to shoot tank {0}, but it hasn\'t reloaded yet'.format(tank)
 
 		return response
 
 
 	def setVelocity(self, tank, speed):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Ordering tank {0} to set velocity to {1}'.format(tank, speed)
 
 		if speed > 1:
@@ -62,14 +61,14 @@ class ServerProxy(object):
 
 		response = self.socket.sendExpectStandardResponse('speed {0} {1}'.format(tank, speed))
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for setVelocity order = {0}'.format(response)
 
 		return response
 
 
 	def setTurnRate(self, tank, rate):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Ordering tank {0} to set turn rate to {1}'.format(tank, rate)
 
 		if rate > 1:
@@ -81,101 +80,101 @@ class ServerProxy(object):
 
 		response = self.socket.sendExpectStandardResponse('angvel {0} {1}'.format(tank, rate))
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for setTurnRate order = {0}'.format(response)
 
 
 	def listTeams(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Sending listTeams request'
 
 		response = self.socket.sendExpectListResponse('teams')
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for listTeams request = {0}'.format(response)
 
 		return Team.parseList(response.getList())
 
 
 	def listObstacles(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Sending listObstacles request'
 
 		response = self.socket.sendExpectListResponse('obstacles')
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for listObstacles request = {0}'.format(response)
 
 		return Obstacle.parseList(response.getList())
 
 
 	def listBases(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Sending listBases request'
 
 		response = self.socket.sendExpectListResponse('bases')
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for listBases request = {0}'.format(response)
 
 		return Base.parseList(response.getList())
 
 
 	def listFlags(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Sending listFlags request'
 
 		response = self.socket.sendExpectListResponse('flags')
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for listFlags request = {0}'.format(response)
 
 		return Flag.parseList(response.getList())
 
 
 	def listShots(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Sending listShots request'
 
 		response = self.socket.sendExpectListResponse('shots')
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for listShots request = {0}'.format(response)
 
 		return Bullet.parseList(response.getList())
 
 
 	def listFriendlyTanks(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Sending listFriendlyTanks request'
 
 		response = self.socket.sendExpectListResponse('mytanks')
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for listFriendlyTanks request = {0}'.format(response)
 
 		return FriendlyTank.parseList(response.getList())
 
 
 	def listEnemyTanks(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Sending listEnemyTanks request'
 
 		response = self.socket.sendExpectListResponse('othertanks')
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for listEnemyTanks request = {0}'.format(response)
 
 		return EnemyTank.parseList(response.getList())
 
 
 	def listConstants(self):
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Sending listContants request'
 
 		response = self.socket.sendExpectListResponse('constants')
 
-		if self._debug:
+		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for listConstants request = {0}'.format(response)
 
 		return Constants.parseList(response.getList())
