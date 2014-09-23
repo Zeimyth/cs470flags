@@ -25,12 +25,8 @@ class FieldAgency:
 		while True:
 			self._takeAction()
 
-	def _initializeFields(self):
-		flags = self.server.listFlags()
-		for flag in flags:
-			if flag.color == self.enemy:
-				self.flagField = AttractiveField(flag.x, flag.y, self.flagRadius, self.flagSpread)
-				self.fields.append(self.flagField)
+	def _initializeFields(self):		
+		self.fields.append(self._findFlag())
 		obstacles = self.server.listObstacles()
 		for obstacle in obstacles:
 			x = 0
@@ -42,8 +38,8 @@ class FieldAgency:
 			y = y / len(obstacle._points)
 			radiusx = obstacle._points[0].x - obstacle._points[3].x
 			radiusy = obstacle._points[0].y - obstacle._points[3].y
-			radius = sqrt(pow(radiusx, 2) + pow(radiusy, 2)) 
-			spread = radius + 30
+			radius = sqrt(pow(radiusx, 2) + pow(radiusy, 2)) / 2
+			spread = 30
 			repulsiveField = RepulsiveField(x, y, radius, spread)
 			self.fields.append(repulsiveField)
 
@@ -59,6 +55,12 @@ class FieldAgency:
 		y = y / len(base._points)
 		self.baseField = AttractiveField(x, y, self.flagRadius, self.flagSpread)
 
+	def _findFlag(self):
+		flags = self.server.listFlags()
+		for flag in flags:
+			if flag.color == self.enemy:
+				return AttractiveField(flag.x, flag.y, self.flagRadius, self.flagSpread)
+
 	def _checkFlag(self):
 		flags = self.server.listFlags()
 		for flag in flags:
@@ -66,7 +68,7 @@ class FieldAgency:
 				if flag.possessingTeam == self.color:
 					self.fields[0] = self.baseField
 				else:
-					self.fields[0] = self.flagField
+					self.fields[0] = self._findFlag()
 
 	def _takeAction(self):
 		tankStatuses = self.server.listFriendlyTanks()

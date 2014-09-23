@@ -23,12 +23,6 @@ class AttractiveField:
 		else:
 			deltaX = (distance - self.radius) * degrees(cos(theta)) * .01
 			deltaY = (distance - self.radius) * degrees(sin(theta)) * .01
-		print "Xs"
-		print xdiff
-		print deltaX
-		print "Ys"
-		print ydiff
-		print deltaY
 		return tuple([deltaX, deltaY])
 		
 		

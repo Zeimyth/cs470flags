@@ -15,13 +15,15 @@ class RepulsiveField:
 		distance = sqrt(pow(xdiff,2) + pow(ydiff,2))
 		theta = atan2(ydiff, xdiff) 
 		if distance < self.radius:
-			deltaX = degrees(sin(theta)) * -.01
-			deltaY = degrees(sin(theta)) * -.01
-		elif distance > self.spread:
+			'''deltaX = degrees(sin(theta)) * -1
+			deltaY = degrees(sin(theta)) * -1'''
+			deltaX = 0
+			deltaY = 0
+		elif distance > self.spread + self.radius:
 			deltaX = 0
 			deltaY = 0
 		else:
-			deltaX = (distance - self.radius) * degrees(cos(theta)) * -.01
-			deltaY = (distance - self.radius) * degrees(sin(theta)) * -.01
+			deltaX = (self.spread + self.radius - distance) * degrees(cos(theta)) * -1
+			deltaY = (self.spread + self.radius - distance) * degrees(sin(theta)) * -1
 		return tuple([deltaX, deltaY])
 		
