@@ -20,7 +20,7 @@ if __name__ == "__main__":
 	parser = _get_parser()
 	args = parser.parse_args()
 
-	if hasattr(args, 'debuglevel'):
+	if args.debuglevel:
 		config.setDebugLevelFromString(args.debuglevel)
 
 	server = ServerProxy(args.url, args.port)
