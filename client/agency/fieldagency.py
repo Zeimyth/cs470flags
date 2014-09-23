@@ -23,7 +23,6 @@ class FieldAgency:
 
 	def _init(self):
 		self._initializeStaticFields()
-		self._initializeDynamicFields()
 		self._initializeTankAgents()
 
 
@@ -59,11 +58,6 @@ class FieldAgency:
 			self.staticFields.append(repulsiveField)
 
 
-	def _initializeDynamicFields(self):
-		# self.dynamicFields.append(self._findFlag())
-		self.staticFields.append(self._findFlag())
-
-
 	def _initializeTankAgents(self):
 		for tank in self.server.listFriendlyTanks():
 			self.agents.append(FieldAgent())
@@ -76,30 +70,42 @@ class FieldAgency:
 
 	def _takeAction(self):
 		tankStatuses = self.server.listFriendlyTanks()
-		self._checkFlag()
+		self._calculateDynamicFields(tankStatuses)
+
+		fields = self.staticFields + self.dynamicFields
+
 		for i in range(len(self.agents)):
-			action = self.agents[i].getAction(self.staticFields, tankStatuses[i])
+			action = self.agents[i].getAction(fields, tankStatuses[i])
 			if action[0] == "speed":
 				self.server.setVelocity(i, action[1])
 			elif action[0] == "turn":
 				self.server.setTurnRate(i, action[1])
 
 
-	def _checkFlag(self):
-		flags = self.server.listFlags()
-		for flag in flags:
+	def _calculateDynamicFields(self, friendlyTanks):
+		self.dynamicFields = []
+		self._calculateFlagFields()
+		self._calculateFriendlyTanks(friendlyTanks)
+		# self._calculateEnemyTanks()
+
+
+	def _calculateFlagFields(self):
+		for flag in self.server.listFlags():
 			if flag.color == self.enemy:
+				flagField = None
+
 				if flag.possessingTeam == self.color:
-					self.staticFields[0] = self.baseField
+					flagField = self.baseField
 				else:
-					self.staticFields[0] = self._findFlag()
+					flagField = AttractiveField(flag.x, flag.y, self.flagRadius, self.flagSpread)
+
+				self.dynamicFields.append(flagField)
 
 
-	def _findFlag(self):
-		flags = self.server.listFlags()
-		for flag in flags:
-			if flag.color == self.enemy:
-				return AttractiveField(flag.x, flag.y, self.flagRadius, self.flagSpread)
+	def _calculateFriendlyTanks(self, friendlyTanks):
+		for tank in friendlyTanks:
+			tankField = RepulsiveField(tank.x, tank.y, 3, 10)
+			self.dynamicFields.append(tankField)
 
 
 	def _findCenterOfPoints(self, points):
