@@ -11,7 +11,7 @@ def _get_parser():
 	parser.add_argument('url')
 	parser.add_argument('-p', '--port', type=int, required=True)
 	parser.add_argument('-c', '--color', required=True)
-	parser.add_argument('-d --debuglevel')
+	parser.add_argument('-d', '--debuglevel')
 
 	return parser
 
