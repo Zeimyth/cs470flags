@@ -42,7 +42,7 @@ class ServerProxy(object):
 
 		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for shoot order = {0}'.format(response)
-		elif not response.isOk() and config.debugLevelEnabled(config.ERROR):
+		elif not response.isOk() and config.debugLevelEnabled(config.WARN):
 			print 'ServerProxy: Attempted to shoot tank {0}, but it hasn\'t reloaded yet'.format(tank)
 
 		return response
