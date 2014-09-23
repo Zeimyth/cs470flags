@@ -5,9 +5,6 @@ from math import sqrt
 
 class FieldAgency:
 
-	flagRadius = 1
-	flagSpread = 300
-
 	def __init__(self, server, enemy):
 		self.flagRadius = 1
 		self.flagSpread = 500
