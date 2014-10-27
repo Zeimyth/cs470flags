@@ -17,12 +17,38 @@ class ProbabilityGrid:
 		self.trueNegative = trueNegative
 		self.falsePositive = 1 - truePositive
 		self.falseNegative = 1 - trueNegative
+		self.inputCount = 0
+
+	def batchUpdate(self, x, y, filterGrid):
+		x = x + 400
+		y = 400 - y
+		width = filterGrid[0].size()
+		height = filterGrid[0][0].size()
+		for dx in range(width):
+			for dy in range(height):
+				self.update(x+dx, y+dy, filterGrid[dx][dy])
+		self.inputCount += 0
+		if(self.inputCount % 10 is 0):
+			self.showImages()
+
+	def showImages(self):
+		self.showProbability()
+		self.showCoverage()
+
+	def showProbability(self):
+		image = Image.fromarray((self.grid * 255).astype(np.int32))
+		image.save(path)
+
+	def showCoverage(self):
+		imageArray = (self.coverage * 255) / self.coverage.max()
+		coverageImage = Image.fromarray(imageArray.astype(np.int32))
+		coverageImage.show()
 
 	#The x and y of where we are updating
 	#obstacle: a boolean indicating whether the position is reported to be a obstace
 	#Updates the probability that a pixel is an obstacle
-	def update(self, x, y, obstacle):
-		current = self.grid[y,x]
+	def _update(self, x, y, obstacle):
+		current = self.grid[x,y]
 		notCurrent = 1 - current
 		if obstacle:
 			new = (self.truePositive * current) / ((self.truePositive * current) + (self.falsePositive * notCurrent)
@@ -34,21 +60,21 @@ class ProbabilityGrid:
 
 	#returns the probability that a point is n obstacle
 	def getProbability(self, x, y):
-		return self.grid[y,x]
+		return self.grid[x,y]
 
 	#returns the number of times a point as been observed
 	def getCoverage(self, x, y):
-		return self.coverage[y,x]
+		return self.coverage[x,y]
 
 	#creates the probability map image
 	def createImage(self, path):
-		image = Image.fromarray(self.grid)
+		image = Image.fromarray((self.grid * 255).astype(np.int32))
 		image.save(path)
 
 	#creates the coverage map image
 	def createCoverageImage(self, path):
-		imageArray = self.coverage / self.coverage.max()
-		coverageImage = Image.fromarray(imageArray)
+		imageArray = (self.coverage * 255) / self.coverage.max()
+		coverageImage = Image.fromarray(imageArray.astype(np.int32))
 		coverageImage.save(path)
 
 	#saves a csv of of the probabilities
