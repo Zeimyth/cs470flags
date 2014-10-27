@@ -22,8 +22,8 @@ class ProbabilityGrid:
 	def batchUpdate(self, x, y, filterGrid):
 		x = x + 400
 		y = 400 - y
-		width = len(filterGrid[0])
-		height = len(filterGrid[0][0])
+		width = len(filterGrid)
+		height = len(filterGrid[0])
 		for dx in range(width):
 			for dy in range(height):
 				self.update(x+dx, y+dy, filterGrid[dx][dy])
