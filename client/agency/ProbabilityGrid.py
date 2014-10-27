@@ -37,7 +37,7 @@ class ProbabilityGrid:
 
 	def showProbability(self):
 		image = Image.fromarray((self.grid * 255).astype(np.int32))
-		image.save(path)
+		image.show()
 
 	def showCoverage(self):
 		imageArray = (self.coverage * 255) / self.coverage.max()
