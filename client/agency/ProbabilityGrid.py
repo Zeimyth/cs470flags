@@ -11,7 +11,7 @@ class ProbabilityGrid:
 	#trueNegative: the True Negative Rate
 	def __init__(self, width, height, prior, truePositive, trueNegative):
 		self.grid = np.zeros((width, height))
-		self.coverage = np.zeros(width, height)
+		self.coverage = np.zeros((width, height))
 		self.grid.fill(prior)
 		self.truePositive = truePositive
 		self.trueNegative = trueNegative
