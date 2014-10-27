@@ -15,6 +15,7 @@ from data.enemytank import EnemyTank
 from data.flag import Flag
 from data.friendlytank import FriendlyTank
 from data.obstacle import Obstacle
+from data.occgrid import OccGrid
 from data.team import Team
 
 class ServerProxy(object):
@@ -180,4 +181,13 @@ class ServerProxy(object):
 		return Constants.parseList(response.getList())
 
 
-	#def getSurroundings(self, tank):
+	def getSurroundings(self, tank):
+		if config.debugLevelEnabled(config.DEBUG):
+			print 'ServerProxy: Sending getSurroundings request'
+
+		response = self.socket.sendExpectListResponse('occgrid {0}'.format(tank))
+
+		if config.debugLevelEnabled(config.DEBUG):
+			print 'ServerProxy: Response for listConstants request = {0}'.format(response)
+
+		return OccGrid.parseList(response.getList())
