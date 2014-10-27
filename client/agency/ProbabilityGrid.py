@@ -51,7 +51,7 @@ class ProbabilityGrid:
 		current = self.grid[x,y]
 		notCurrent = 1 - current
 		if obstacle:
-			new = (self.truePositive * current) / ((self.truePositive * current) + (self.falsePositive * notCurrent)
+			new = (self.truePositive * current) / ((self.truePositive * current) + (self.falsePositive * notCurrent))
 		else:
 			notNew = (self.trueNegative * notCurrent) / ((self.trueNegative * notCurrent) + (self.falseNegative * current))
 			new = 1 - notNew
