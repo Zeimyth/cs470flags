@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 
 import config
 from net.server import ServerProxy
-# from agency.blind import BlindAgency
+from agency.blind import BlindAgency
 
 def _get_parser():
 	parser = ArgumentParser(description='Run a BZRFlags client with an imperfect obstacle sensor.')
@@ -23,5 +23,4 @@ if __name__ == "__main__":
 		config.setDebugLevelFromString(args.debuglevel)
 
 	server = ServerProxy(args.url, args.port)
-	# BlindAgency(server)
-	print server.getSurroundings(0)
+	BlindAgency(server, .1)

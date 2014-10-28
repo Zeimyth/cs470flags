@@ -190,4 +190,9 @@ class ServerProxy(object):
 		if config.debugLevelEnabled(config.DEBUG):
 			print 'ServerProxy: Response for listConstants request = {0}'.format(response)
 
-		return OccGrid.parseList(response.getList())
+		occList = response.getList()
+		if len(occList) > 0:
+			return OccGrid.parseList(response.getList())
+		else:
+			return None
+

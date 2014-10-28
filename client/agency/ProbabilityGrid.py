@@ -19,6 +19,12 @@ class ProbabilityGrid:
 		self.falseNegative = 1 - trueNegative
 		self.inputCount = 0
 
+	def getWidth(self):
+		return len(self.grid)
+
+	def getHeight(self):
+		return len(self.grid[0])
+
 	def batchUpdate(self, x, y, filterGrid):
 		x = x + 400
 		y = 400 - y
@@ -28,7 +34,7 @@ class ProbabilityGrid:
 			for dy in xrange(height):
 				self._update(x+dx, y+dy, filterGrid[dx][dy])
 		self.inputCount += 1
-		if(self.inputCount % 10 is 0):
+		if(self.inputCount % 100 is 0):
 			self.showProbability()
 
 	def showImages(self):

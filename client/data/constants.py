@@ -27,6 +27,14 @@ class Constants:
 		return self.dictionary[key]
 
 
+	def getInt(self, key):
+		return int(self.get(key))
+
+
+	def getFloat(self, key):
+		return float(self.get(key))
+
+
 	# examples:
 	# constant team blue
 	# constant worldsize 800
