@@ -24,12 +24,12 @@ class ProbabilityGrid:
 		y = 400 - y
 		width = len(filterGrid)
 		height = len(filterGrid[0])
-		for dx in range(width):
-			for dy in range(height):
+		for dx in xrange(width):
+			for dy in xrange(height):
 				self._update(x+dx, y+dy, filterGrid[dx][dy])
-		self.inputCount += 0
+		self.inputCount += 1
 		if(self.inputCount % 10 is 0):
-			#self.showImages()
+			self.showProbability()
 
 	def showImages(self):
 		self.showProbability()
@@ -48,7 +48,7 @@ class ProbabilityGrid:
 	#obstacle: a boolean indicating whether the position is reported to be a obstace
 	#Updates the probability that a pixel is an obstacle
 	def _update(self, x, y, obstacle):
-		current = self.grid[x,y]
+		current = self.grid[y,x]
 		notCurrent = 1 - current
 		if obstacle:
 			new = (self.truePositive * current) / ((self.truePositive * current) + (self.falsePositive * notCurrent))
@@ -60,11 +60,11 @@ class ProbabilityGrid:
 
 	#returns the probability that a point is n obstacle
 	def getProbability(self, x, y):
-		return self.grid[x,y]
+		return self.grid[y,x]
 
 	#returns the number of times a point as been observed
 	def getCoverage(self, x, y):
-		return self.coverage[x,y]
+		return self.coverage[y,x]
 
 	#creates the probability map image
 	def createImage(self, path):
