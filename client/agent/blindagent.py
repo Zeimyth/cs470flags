@@ -19,6 +19,7 @@ class BlindAgent:
 		now = time.time()
 
 		self._moveTimes.append(now + offset)
+		self._moveTimes.sort()
 		self._moveList[now + offset] = move
 
 
@@ -37,15 +38,23 @@ class BlindAgent:
 				self.goal = self._chooseNewGoal(grid)
 				print 'New goal: {0}'.format(self.goal)
 				self._pushMove('repath', 0)
+				return None
 			elif nextMove == 'repath':
 				# calculate the best path to the destination
-				self._calculatePath(status.x, status.y, grid)
+				self._path = self._calculatePath(status.x, status.y, grid)
+				print(self._path)
+				self._nextStep = 0
+				self._pushMove('track', 0)
+				self._pushMove('repath', 5)
+				return None
+			elif nextMove == 'track':
+				return None
 			elif nextMove == 'setSpeed':
 				# set the new forward speed
-				pass
+				return None
 			elif nextMove == 'setTurn':
 				# set the new turning speed
-				pass
+				return None
 			else:
 				return None
 
@@ -63,4 +72,4 @@ class BlindAgent:
 
 
 	def _calculatePath(self, x, y, grid):
-		pass
+		return grid.calculatePathToPoint(Point(x, y), self.goal)

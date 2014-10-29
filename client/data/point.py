@@ -3,8 +3,13 @@ class Point(object):
 		self.x = x
 		self.y = y
 
+
 	def toTuple(self):
 		return tuple([self.x, self.y])
+
+
+	def flatten(self, mult):
+		return self.x + self.y * mult
 
 
 	def __str__(self):
