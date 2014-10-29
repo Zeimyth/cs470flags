@@ -25,9 +25,10 @@ class ProbabilityGrid:
 	def getHeight(self):
 		return len(self.grid[0])
 
-	def batchUpdate(self, x, y, filterGrid):
-		x = x + 400
-		y = 400 - y
+
+	def batchUpdate(self, worldX, worldY, filterGrid):
+		x = worldX + 400
+		y = 399 - worldY
 		width = len(filterGrid)
 		height = len(filterGrid[0])
 		for dx in xrange(width):
@@ -36,6 +37,7 @@ class ProbabilityGrid:
 		self.inputCount += 1
 		if(self.inputCount % 100 is 0):
 			self.showProbability()
+			# self.showCoverage()
 
 	def showImages(self):
 		self.showProbability()
@@ -54,15 +56,16 @@ class ProbabilityGrid:
 	#obstacle: a boolean indicating whether the position is reported to be a obstace
 	#Updates the probability that a pixel is an obstacle
 	def _update(self, x, y, obstacle):
-		current = self.grid[y,x]
-		notCurrent = 1 - current
-		if obstacle:
-			new = (self.truePositive * current) / ((self.truePositive * current) + (self.falsePositive * notCurrent))
-		else:
-			notNew = (self.trueNegative * notCurrent) / ((self.trueNegative * notCurrent) + (self.falseNegative * current))
-			new = 1 - notNew
-		self.grid[y,x] = new
-		self.coverage[y,x] = self.coverage[y,x] + 1
+		if x >= 0 and y >= 0 and x < len(self.grid) and y < len(self.grid[0]):
+			current = self.grid[y,x]
+			notCurrent = 1 - current
+			if obstacle:
+				new = (self.truePositive * current) / ((self.truePositive * current) + (self.falsePositive * notCurrent))
+			else:
+				notNew = (self.trueNegative * notCurrent) / ((self.trueNegative * notCurrent) + (self.falseNegative * current))
+				new = 1 - notNew
+			self.grid[y,x] = new
+			self.coverage[y,x] = self.coverage[y,x] + 1
 
 	#returns the probability that a point is n obstacle
 	def getProbability(self, x, y):

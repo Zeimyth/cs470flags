@@ -45,10 +45,10 @@ class BlindAgency:
 			action = self.agents[i].getAction(tankData[i], GridWrapper(self.grid))
 
 			if action is not None:
-				if action[0] == "speed":
-					self._server.setVelocity(i, action[1])
-				elif action[1] == "turn":
-					self._server.setTurnRate(i, action[1])
+				if 'speed' in action:
+					self._server.setVelocity(i, action['speed'])
+				if 'angle' in action:
+					self._server.setTurnRate(i, action['angle'])
 
 			# action = self.agents[i].getAction()
 			# if action != "":
@@ -79,7 +79,7 @@ class GridWrapper:
 		width = self._grid.getWidth()
 		height = self._grid.getHeight()
 
-		allPoints = [(self._grid.getCoverage(x, y), (x**2 + y**2)**0.5, x - 400, 400 - y) for y in xrange(height) for x in xrange(width)]
+		allPoints = [(self._grid.getCoverage(x, y), (x**2 + y**2)**0.5, x - 400, 399 - y) for y in xrange(height) for x in xrange(width)]
 		goal = sorted(allPoints, key=itemgetter(0, 1))[0]
 		return (goal[2], goal[3])
 
@@ -103,16 +103,15 @@ class GridWrapper:
 				continue
 			closedSet.add(current.flatten(800))
 			for neighbor in self._getNeighborNodes(current):
-				print neighbor.flatten(800), neighbor.flatten(800) in closedSet
 				if neighbor.flatten(800) in closedSet:
 					continue
 
 				neighborScore = score[current] + 1
-				cameFrom[neighbor] = current
+				cameFrom[neighbor.flatten(800)] = current
 				score[neighbor] = neighborScore
 				queue.put((neighborScore + self._heuristic(neighbor, goal), neighbor))
 
-		return None
+		return []
 
 
 	def _heuristic(self, point, goal):
@@ -140,13 +139,13 @@ class GridWrapper:
 
 
 	def _isValidPoint(self, point):
-		return point.x >= -400 and point.x <= 400 and point.y >= -400 and point.y <= 400 and self._grid.getProbability(point.x + 400, 400 - point.y) < self._THRESHOLD
+		return point.x >= -400 and point.x <= 399 and point.y >= -400 and point.y <= 399 and self._grid.getProbability(point.x + 400, 399 - point.y) < self._THRESHOLD
 
 
 	def _reconstructPath(self, cameFrom, currentNode):
-		if currentNode in cameFrom:
-			path = reconstructPath(cameFrom, cameFrom[currentNode])
+		if currentNode.flatten(800) in cameFrom:
+			path = self._reconstructPath(cameFrom, cameFrom[currentNode.flatten(800)])
 			path.append(currentNode) # correct? reverse order?
 			return path
 		else:
-			return currentNode
+			return [currentNode]
