@@ -99,6 +99,8 @@ class GridWrapper:
 			if current.x == goal.x and current.y == goal.y:
 				return self._reconstructPath(cameFrom, goal)
 
+			if current.flatten(800) in closedSet:
+				continue
 			closedSet.add(current.flatten(800))
 			for neighbor in self._getNeighborNodes(current):
 				print neighbor.flatten(800), neighbor.flatten(800) in closedSet
