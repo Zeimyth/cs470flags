@@ -32,7 +32,7 @@ class ProbabilityGrid:
 		height = len(filterGrid[0])
 		for dx in xrange(width):
 			for dy in xrange(height):
-				self._update(x+dx, y+dy, filterGrid[dx][dy])
+				self._update(x+dx, y-dy, filterGrid[dx][dy])
 		self.inputCount += 1
 		if(self.inputCount % 100 is 0):
 			self.showProbability()
