@@ -152,9 +152,19 @@ class GridWrapper:
 
 
 	def _reconstructPath(self, cameFrom, currentNode):
-		if currentNode.flatten(800) in cameFrom:
-			path = self._reconstructPath(cameFrom, cameFrom[currentNode.flatten(800)])
-			path.append(currentNode) # correct? reverse order?
-			return path
-		else:
-			return [currentNode]
+		# if currentNode.flatten(800) in cameFrom:
+		# 	path = self._reconstructPath(cameFrom, cameFrom[currentNode.flatten(800)])
+		# 	path.append(currentNode)
+		# 	return path
+		# else:
+		# 	return [currentNode]
+		reversePath = []
+
+		while True:
+			reversePath.append(currentNode)
+			if (currentNode.flatten(800) in cameFrom):
+				currentNode = cameFrom[currentNode.flatten(800)]
+			else:
+				break
+
+		return reversePath[::-1]

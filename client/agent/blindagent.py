@@ -11,7 +11,7 @@ class BlindAgent:
 	def __init__(self):
 		self._clearMoves()
 
-		self.PATH_THRESHOLD = 20
+		self.PATH_THRESHOLD = 10
 		self.GOAL_THRESHOLD = 50
 
 		self.goal = None
@@ -57,6 +57,7 @@ class BlindAgent:
 				return {'speed': 1}
 			elif nextMove == 'repath':
 				# calculate the best path to the destination
+				print 'Recalculating path...'
 				self._path = self._calculatePath(status.x, status.y, grid)
 				self._nextStep = 0
 				self._pushMove('track', 0)
@@ -84,20 +85,40 @@ class BlindAgent:
 	def _calculatePath(self, x, y, grid):
 		fullPath = grid.calculatePathToPoint(Point(x, y), self.goal)
 
+		# print 'full path',
+		# for p in fullPath:
+		# 	print str(p)
+
 		corners = []
+		twoAgo = None
 		previous = None
 
 		for point in fullPath:
 			if len(corners) == 0:
 				# Special case to keep starting point out of the path
-				if previous is not None and previous.x != point.x and previous.y != point.y:
+				if previous is not None and twoAgo is not None and \
+				previous.x - point.x != twoAgo.x - previous.x and \
+				previous.y - point.y != twoAgo.y - previous.y:
 					corners.append(previous)
-			elif corners[-1].x != point.x and corners[-1].y != point.y:
-				corners.append(previous)
+			elif len(corners) == 1:
+				if previous.x - point.x != corners[-1].x - previous.x and \
+				previous.y - point.y != corners[-1].y - previous.y:
+					corners.append(previous)
+			else:
+				if corners[-1].x - point.x != corners[-2].x - corners[-1].x and \
+				corners[-1].y - point.y != corners[-2].y - corners[-1].y:
+					corners.append(previous)
 
+			twoAgo = previous
 			previous = point
 
 		corners.append(fullPath[-1])
+
+		# print 'path',
+		# for p in corners:
+		# 	print str(p),
+
+		# print ''
 
 		return corners
 
@@ -110,6 +131,7 @@ class BlindAgent:
 			if self._distance(currentPoint, myLoc) > self.PATH_THRESHOLD:
 				return currentPoint
 			else:
+				# print 'reached {0}'.format(str(currentPoint))
 				while self._nextStep < len(self._path) and self._distance(self._path[self._nextStep], myLoc) <= self.PATH_THRESHOLD:
 					self._nextStep += 1
 
