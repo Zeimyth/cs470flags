@@ -60,8 +60,8 @@ class BlindAgent:
 				self._path = self._calculatePath(status.x, status.y, grid)
 				self._nextStep = 0
 				self._pushMove('track', 0)
-				self._pushMove('repath', 5)
-				return None
+				self._pushMove('repath', 10)
+				return {'shoot': True}
 			elif nextMove == 'track':
 				targetPoint = self._getNextPointInPath(Point(status.x, status.y))
 				# print targetPoint
@@ -82,11 +82,30 @@ class BlindAgent:
 
 
 	def _calculatePath(self, x, y, grid):
-		return grid.calculatePathToPoint(Point(x, y), self.goal)
+		fullPath = grid.calculatePathToPoint(Point(x, y), self.goal)
+
+		corners = []
+		previous = None
+
+		for point in fullPath:
+			if len(corners) == 0:
+				# Special case to keep starting point out of the path
+				if previous is not None and previous.x != point.x and previous.y != point.y:
+					corners.append(previous)
+			elif corners[-1].x != point.x and corners[-1].y != point.y:
+				corners.append(previous)
+
+			previous = point
+
+		corners.append(fullPath[-1])
+
+		return corners
 
 
 	def _getNextPointInPath(self, myLoc):
-		if self._distance(myLoc, self.goal) > self.GOAL_THRESHOLD:
+		if self._nextStep >= len(self._path):
+			return None
+		elif self._distance(myLoc, self.goal) > self.GOAL_THRESHOLD:
 			currentPoint = self._path[self._nextStep]
 			if self._distance(currentPoint, myLoc) > self.PATH_THRESHOLD:
 				return currentPoint
@@ -107,8 +126,14 @@ class BlindAgent:
 
 
 	def _trackToPoint(self, point, status):
+		# print point, Point(status.x, status.y)
 		desiredAngle = self._getAngleOfLineBetweenTwoPoints(Point(status.x, status.y), point)
 		myAngle = degrees(status.angle)
+
+		if desiredAngle > 90 and myAngle < -90:
+			myAngle += 360
+		elif myAngle > 90 and desiredAngle < -90:
+			desiredAngle += 360
 
 		# print desiredAngle, myAngle
 

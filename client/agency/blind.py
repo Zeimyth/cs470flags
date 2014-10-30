@@ -49,6 +49,8 @@ class BlindAgency:
 					self._server.setVelocity(i, action['speed'])
 				if 'angle' in action:
 					self._server.setTurnRate(i, action['angle'])
+				if 'shoot' in action:
+					self._server.shoot(i)
 
 			# action = self.agents[i].getAction()
 			# if action != "":
@@ -106,7 +108,14 @@ class GridWrapper:
 				if neighbor.flatten(800) in closedSet:
 					continue
 
-				neighborScore = score[current] + 1
+				turnPenalty = 0.5
+
+				if current.flatten(800) in cameFrom and \
+				current.x - neighbor.x == cameFrom[current.flatten(800)].x - current.x and \
+				current.y - neighbor.y == cameFrom[current.flatten(800)].y - current.y:
+					turnPenalty = 0 
+
+				neighborScore = score[current] + 1 + turnPenalty
 				cameFrom[neighbor.flatten(800)] = current
 				score[neighbor] = neighborScore
 				queue.put((neighborScore + self._heuristic(neighbor, goal), neighbor))
