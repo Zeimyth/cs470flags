@@ -112,7 +112,8 @@ class BlindAgent:
 			twoAgo = previous
 			previous = point
 
-		corners.append(fullPath[-1])
+		if len(fullPath) > 0:
+			corners.append(fullPath[-1])
 
 		# print 'path',
 		# for p in corners:
