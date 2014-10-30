@@ -54,7 +54,7 @@ class BlindAgent:
 				self.goal = self._chooseNewGoal(grid)
 				print 'New goal: {0}'.format(self.goal)
 				self._pushMove('repath', 0)
-				return {'speed': 1}
+				return {'speed': 1, 'angle': 1}
 			elif nextMove == 'repath':
 				# calculate the best path to the destination
 				print 'Recalculating path...'
