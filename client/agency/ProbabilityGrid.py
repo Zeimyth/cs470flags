@@ -18,6 +18,7 @@ class ProbabilityGrid:
 		self.falsePositive = 1 - truePositive
 		self.falseNegative = 1 - trueNegative
 		self.inputCount = 0
+		self.outputCount = 1
 
 	def getWidth(self):
 		return len(self.grid)
@@ -35,8 +36,11 @@ class ProbabilityGrid:
 			for dy in xrange(height):
 				self._update(x+dx, y-dy, filterGrid[dx][dy])
 		self.inputCount += 1
-		if(self.inputCount % 100 is 0):
-			self.showProbability()
+		if(self.inputCount % 500 is 0):
+			self.outputCount += 1
+			self.createImage(str(self.outputCount) + "probability.tiff")
+			self.createCoverageImage(str(self.outputCount) + "coverage.tiff")
+			self.saveCSV(str(self.outputCount) + "probability.csv")
 			# self.showCoverage()
 
 	def showImages(self):
@@ -77,13 +81,13 @@ class ProbabilityGrid:
 
 	#creates the probability map image
 	def createImage(self, path):
-		image = Image.fromarray((self.grid * 255).astype(np.int32))
+		image = Image.fromarray(self.grid)
 		image.save(path)
 
 	#creates the coverage map image
 	def createCoverageImage(self, path):
-		imageArray = (self.coverage * 255) / self.coverage.max()
-		coverageImage = Image.fromarray(imageArray.astype(np.int32))
+		imageArray = self.coverage
+		coverageImage = Image.fromarray(imageArray)
 		coverageImage.save(path)
 
 	#saves a csv of of the probabilities
