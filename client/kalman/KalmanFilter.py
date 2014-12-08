@@ -97,7 +97,7 @@ class KalmanFilter:
 		return FEtFTplus
 
 	def calculate_kalman(self, FEtFTplus):
-		kalman_next = FEtFTplus * self.emission_t * numpy.linalg.inv((self.emission * FEtFTplus * self.emission_t)+ self.emission_eps)
+		kalman_next = FEtFTplus * self.emission_t * numpy.linalg.inv((self.emission * FEtFTplus * self.emission_t) + self.emission_eps)
 		return kalman_next
 
 	def calculate_epsilon(self, FEtFTplus, kalman_next):
