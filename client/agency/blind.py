@@ -27,8 +27,8 @@ class BlindAgency:
 		self.agents = []
 
 		self.agents.append(BlindAgent())
-		# self.agents.append(DumbAgent())
-		# self.agents.append(DumbAgent())
+		#self.agents.append(DumbAgent())
+		#self.agents.append(DumbAgent())
 		# self.agents.append(DumbAgent())
 
 		while True:

@@ -5,5 +5,5 @@ from kalman.KalmanFilter import KalmanFilter
 
 class KalmanClient:
 
-	def __init__(self, comQueue, args, server):
-		KalmanFilter(server, args.color, comQueue)
+	def __init__(self, obsQueue, predQueue, args):
+		KalmanFilter(args.color, obsQueue, predQueue)
