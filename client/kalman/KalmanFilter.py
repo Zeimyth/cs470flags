@@ -1,10 +1,16 @@
+import sys
+import os.path
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
+import config
 
 import time
 import numpy
 
 class KalmanFilter:
 
-	def __init__(self, enemy, obsQueue, predQueue):
+	def __init__(self, enemy, obsQueue, predQueue, interval):
 		self.iteration_count = 15
 
 		self.enemy = enemy
@@ -12,46 +18,59 @@ class KalmanFilter:
 		self.obsQueue = obsQueue
 		self.predQueue = predQueue
 
-		self._setConstants()
+		if config.debugLevelEnabled(config.INFO):
+			print "KalmanFilter: Initializing"
+
+		self._setConstants(interval)
 
 		self._run()
 
-	def _setConstants(self):
+	def _setConstants(self, interval):
 		self.state_not = numpy.matrix('400;0;0;0;0;0')
-		self.epsilon_not = numpy.matrix('100 0 0 0 0 0;'+
-		                            '0 .1 0 0 0 0;'+
-		                            '0 0 .1 0 0 0;'+
-		                            '0 0 0 100 0 0;'+
-		                            '0 0 0 0 .1 0;'+
-		                            '0 0 0 0 0 .1')
+		self.epsilon_not = numpy.matrix(
+			'100   0   0   0   0   0;'+
+			'  0   .1  0   0   0   0;'+
+			'  0   0   .1  0   0   0;'+
+			'  0   0   0 100   0   0;'+
+			'  0   0   0   0  .1   0;'+
+			'  0   0   0   0   0  .1'
+		)
 
-		self.delta_t = 3
+		self.delta_t = interval
 
-		self.transmission = numpy.matrix([[1, self.delta_t, self.delta_t**2/2.0, 0, 0, 0],
-			                            [0, 1, self.delta_t, 0, 0, 0],
-			                            [0, 0, 1, 0, 0, 0],
-			                            [0, 0, 0, 1, self.delta_t, self.delta_t**2/2.0],
-			                            [0, 0, 0, 0, 1, self.delta_t],
-			                            [0, 0, 0, 0, 0, 1]])
+		self.transmission = numpy.matrix([
+			[1, self.delta_t, self.delta_t**2/2.0, 0,            0,                   0],
+			[0,            1,        self.delta_t, 0,            0,                   0],
+			[0,            0,                   1, 0,            0,                   0],
+			[0,            0,                   1, 1, self.delta_t, self.delta_t**2/2.0],
+			[0,            0,                   1, 0,            1,        self.delta_t],
+			[0,            0,                   1, 0,            0,                   1]
+		])
 		                            
 		self.transmission_t = self.transmission.transpose()
 		                            
-		self.transmission_eps = numpy.matrix(numpy.matrix('.1 0 0 0 0 0;'+
-				                                            '0 .1 0 0 0 0;'+
-				                                            '0 0 25 0 0 0;'+
-				                                            '0 0 0 .1 0 0;'+
-				                                            '0 0 0 0 .1 0;'+
-				                                            '0 0 0 0 0 25'))
+		self.transmission_eps = numpy.matrix(numpy.matrix(
+			' .1 0  0  0  0  0;'+
+			' 0  .1 0  0  0  0;'+
+			' 0  0 25  0  0  0;'+
+			' 0  0  0  .1 0  0;'+
+			' 0  0  0  0  .1 0;'+
+			' 0  0  0  0  0 25')
+		)
 		                                            
-		self.emission = numpy.matrix('1 0 0 0 0 0;' +
-		                        '0 0 0 1 0 0')
+		self.emission = numpy.matrix(
+			'1 0 0 0 0 0;' +
+			'0 0 0 1 0 0'
+		)
 		                        
 		self.emission_t = self.emission.transpose()
 		                        
 		variance_parameter = 25
 
-		self.emission_eps = numpy.matrix([[variance_parameter, 0],
-		                             [0, variance_parameter]])
+		self.emission_eps = numpy.matrix([
+			[variance_parameter, 0],
+			[0, variance_parameter]
+		])
 		                             
 		self.state_now = self.state_not
 		self.identity = numpy.identity(6)
@@ -64,12 +83,17 @@ class KalmanFilter:
 	def _run(self):
 		while True:
 			now = time.time()
+
+			if config.debugLevelEnabled(config.DEBUG):
+				print 'KalmanFilter: filtering'
+
 			next_wakeup = now + self.delta_t
-			self.doPredictions()
+			self._doPredictions()
 			sleepLength = next_wakeup - time.time()
+
 			time.sleep(sleepLength)
 
-	def doPredictions(self):
+	def _doPredictions(self):
 		observations = ""
 		while not self.obsQueue.empty():
 			observations = self.obsQueue.get()

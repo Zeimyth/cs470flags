@@ -118,7 +118,7 @@ class Socket(object):
 
 
 	def _send(self, message):
-		if config.debugLevelEnabled(config.DEBUG):
+		if config.debugLevelEnabled(config.TRACE):
 			print 'Socket: Sending "{0}"'.format(message)
 
 		self.socket.send(message + '\n')
@@ -130,8 +130,8 @@ class Socket(object):
 		while 1:
 			data = self.socket.recv(self.RECV_SIZE)
 
-			if config.debugLevelEnabled(config.TRACE):
-				print 'Socket: Receive loop, received "{0}"'.format(data)
+			# if config.debugLevelEnabled(config.TRACE):
+			# 	print 'Socket: Receive loop, received "{0}"'.format(data)
 
 			if not data.startswith(Socket.ACKNOWLEDGE):
 				fullResponse += data
@@ -140,7 +140,7 @@ class Socket(object):
 					break
 
 		fullResponse = fullResponse.strip()
-		if config.debugLevelEnabled(config.DEBUG):
+		if config.debugLevelEnabled(config.TRACE):
 			print 'Socket: Received "{0}"'.format(fullResponse)
 
 		return fullResponse

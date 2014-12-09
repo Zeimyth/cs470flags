@@ -18,18 +18,26 @@ def _get_parser():
 
 	return parser
 
-def startKalman(obsQueue, predQueue, args):
-	KalmanClient(obsQueue, predQueue, args)
+def startKalman(obsQueue, predQueue, args, interval):
+	KalmanClient(obsQueue, predQueue, args, interval)
 
 if __name__ == "__main__":
 	parser = _get_parser()
 	args = parser.parse_args()
 
-	obsQueue = Queue()
-	predQueue = Queue()
-	p = Process(target=startKalman, args=(obsQueue, predQueue, args))
-	p.start()
 	if args.debuglevel:
+		print "Setting debug level to {}".format(args.debuglevel)
 		config.setDebugLevelFromString(args.debuglevel)
 
-	ArtemisClient(obsQueue, predQueue, args)
+	obsQueue = Queue()
+	predQueue = Queue()
+
+	interval = 3
+
+	if config.debugLevelEnabled(config.INFO):
+		print 'Constantina: Starting child processes'
+
+	p = Process(target=startKalman, args=(obsQueue, predQueue, args, interval))
+	p.start()
+
+	ArtemisClient(obsQueue, predQueue, args, interval)

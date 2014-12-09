@@ -8,6 +8,6 @@ from agency.ArtemisAgency import ArtemisAgency
 
 class ArtemisClient:
 
-	def __init__(self, obsQueue, predQueue, args):
+	def __init__(self, obsQueue, predQueue, args, interval):
 		server = ServerProxy(args.url, args.port)
-		ArtemisAgency(server, args.color, obsQueue, predQueue)
+		ArtemisAgency(server, args.color, obsQueue, predQueue, interval)

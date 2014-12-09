@@ -7,6 +7,7 @@ TRACE = 10
 _debugLevel = ERROR
 
 def setDebugLevel(level):
+	global _debugLevel
 	_debugLevel = level
 
 
@@ -23,7 +24,10 @@ def setDebugLevelFromString(levelString):
 		setDebugLevel(DEBUG)
 	elif lowerString == "trace":
 		setDebugLevel(TRACE)
+	else:
+		print 'Error: Unrecognized debug level {}'.format(levelString)
 
 
 def debugLevelEnabled(level):
+	global _debugLevel
 	return level >= _debugLevel
