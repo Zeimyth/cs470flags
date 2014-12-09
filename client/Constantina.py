@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from multiprocessing import Queue, Process
+import time
 
 import config
 from KalmanClient import KalmanClient
@@ -19,6 +20,7 @@ def _get_parser():
 	return parser
 
 def startKalman(obsQueue, predQueue, args, interval):
+	time.sleep(interval / 2.0);
 	KalmanClient(obsQueue, predQueue, args, interval)
 
 if __name__ == "__main__":
@@ -32,7 +34,7 @@ if __name__ == "__main__":
 	obsQueue = Queue()
 	predQueue = Queue()
 
-	interval = 3
+	interval = 1
 
 	if config.debugLevelEnabled(config.INFO):
 		print 'Constantina: Starting child processes'
