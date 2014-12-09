@@ -106,8 +106,8 @@ class KalmanFilter:
 		predictions = []
 		for e in enemyList:
 			state_now = self.tankStates.get(e.callsign, self.state_not)
-			iteration = self.tankObservations.setdefault(e.callsign, 1)
-			i = iteration % self.iteration_count
+			iteration = self.tankObservations.setdefault(e.callsign, 0)
+			i = (iteration % self.iteration_count) + 1
 			state_next = self.filterObservation(e.x, e.y, state_now, i)
 			prediction = self.predictFuturePosition(state_next)
 			predictions.append((prediction[0,0], prediction[3,0]))
