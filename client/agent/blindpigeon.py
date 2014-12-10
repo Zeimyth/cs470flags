@@ -54,7 +54,7 @@ class BlindPigeon:
 				self.goal = self._chooseNewGoal()
 				print 'New goal: {0}'.format(self.goal)
 				self._pushMove('repath', 0)
-				return {'speed': 1, 'angle': 1}
+				return {'speed': 0, 'angle': 0}
 			elif nextMove == 'repath':
 				# calculate the best path to the destination
 				print 'Recalculating path...'
@@ -79,7 +79,7 @@ class BlindPigeon:
 
 
 	def _chooseNewGoal(self):
-		return Point(1000, 1000)
+		return Point(-200, 0)
 
 
 	def _calculatePath(self, x, y):
