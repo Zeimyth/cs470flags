@@ -1,9 +1,8 @@
 from argparse import ArgumentParser
 
-import random
-
 import config
 from net.server import ServerProxy
+from agent.blindpigeon import BlindPigeon
 
 def _get_parser():
 	parser = ArgumentParser(description='Run a BZRFlags client.')
@@ -22,11 +21,15 @@ if __name__ == "__main__":
 		config.setDebugLevelFromString(args.debuglevel)
 
 	server = ServerProxy(args.url, args.port)
-	direction = 1
+	agents = [BlindPigeon()]
 	while True:
-		randomTurn = random.random() * direction
-		server.setTurnRate(0,randomTurn)
-		if random.random() > .85:
-			direction *= -1
-		randomVelocity = random.random() * direction
-		server.setVelocity(0, randomVelocity)
+		tankData = server.listFriendlyTanks()
+		for i in range(len(agents)):
+			action = agents[i].getAction(tankData[i])
+			if action is not None:
+				if 'speed' in action:
+					server.setVelocity(i, action['speed'])
+				if 'angle' in action:
+					server.setTurnRate(i, action['angle'])
+				if 'shoot' in action:
+					server.shoot(i)
