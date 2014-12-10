@@ -152,5 +152,5 @@ class KalmanFilter:
 		return state_next
 
 	def predictFuturePosition(self, state):
-		return self.transmission * state
+		return self.transmission * (self.transmission * state)
 

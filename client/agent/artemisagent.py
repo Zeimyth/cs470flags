@@ -45,7 +45,7 @@ class ArtemisAgent:
 		elif angle < -180:
 			angle += 360
 
-		if self.degreesToTurn / angle > .5:
+		if abs(angle) > 5:
 			rate = copysign(1, angle)
 		else:
 			rate = 0
@@ -53,6 +53,6 @@ class ArtemisAgent:
 		if config.debugLevelEnabled(config.DEBUG):
 			print self.degreesToTurn / angle
 			print "ArtemisAgent: Desired angle = {0:.2f}, Angle = {1:.2f}, Rate = {2:.2f}".format(
-				newAngle, angle, rate)
+				newAngle, myAngle, rate)
 
 		return rate

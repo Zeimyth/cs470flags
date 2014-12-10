@@ -79,7 +79,7 @@ class BlindPigeon:
 
 
 	def _chooseNewGoal(self):
-		return Point(-200, 0)
+		return Point(-200, 200)
 
 
 	def _calculatePath(self, x, y):

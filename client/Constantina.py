@@ -34,7 +34,7 @@ if __name__ == "__main__":
 	obsQueue = Queue()
 	predQueue = Queue()
 
-	interval = 1
+	interval = .75
 
 	if config.debugLevelEnabled(config.INFO):
 		print 'Constantina: Starting child processes'
