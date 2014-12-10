@@ -4,6 +4,7 @@ import random
 
 import config
 from net.server import ServerProxy
+import time
 
 def _get_parser():
 	parser = ArgumentParser(description='Run a BZRFlags client.')
@@ -22,11 +23,14 @@ if __name__ == "__main__":
 		config.setDebugLevelFromString(args.debuglevel)
 
 	server = ServerProxy(args.url, args.port)
-	direction = 1
+	forward = 1
+	turn = 1
 	while True:
-		randomTurn = random.random() * direction
-		server.setTurnRate(0,randomTurn)
-		if random.random() > .85:
-			direction *= -1
-		randomVelocity = random.random() * direction
-		server.setVelocity(0, randomVelocity)
+		if random.random() < .10:
+			turn *= -1
+		server.setTurnRate(0, turn)
+		time.sleep(.1)
+		if random.random() < .05:
+			forward *= -1
+		server.setVelocity(0, forward)
+		time.sleep(.1)
