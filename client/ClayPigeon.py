@@ -31,5 +31,5 @@ if __name__ == "__main__":
 					server.setVelocity(i, action['speed'])
 				if 'angle' in action:
 					server.setTurnRate(i, action['angle'])
-				if 'shoot' in action:
-					server.shoot(i)
+				# if 'shoot' in action:
+				# 	server.shoot(i)

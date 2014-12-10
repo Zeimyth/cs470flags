@@ -10,4 +10,5 @@ class ArtemisClient:
 
 	def __init__(self, obsQueue, predQueue, args, interval):
 		server = ServerProxy(args.url, args.port)
-		ArtemisAgency(server, args.color, obsQueue, predQueue, interval)
+		# ArtemisAgency(server, args.color, obsQueue, predQueue, interval)
+		ArtemisAgency(server, obsQueue, predQueue, interval)

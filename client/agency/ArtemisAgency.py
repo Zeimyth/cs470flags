@@ -5,21 +5,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 
 import config
 
-from agent.fieldagent import FieldAgent
-from fields.attractive import AttractiveField
-from fields.repulsive import RepulsiveField
-from math import sqrt
 import time
+
+from agent.artemisagent import ArtemisAgent
 
 class ArtemisAgency:
 
-	def __init__(self, server, enemy, obsQueue, predQueue, interval):
-		self.flagRadius = 1
-		self.flagSpread = 500
-
+	def __init__(self, server, obsQueue, predQueue, interval):
 		self.server = server
-		self.enemy = enemy
-		self.color = self.server.listConstants().get('team')
 
 		self.obsQueue = obsQueue
 		self.predQueue = predQueue
@@ -27,9 +20,6 @@ class ArtemisAgency:
 		self.interval = interval
 
 		self.agents = []
-		self.staticFields = []
-		self.dynamicFields = []
-		self.lastOpponent = ""
 
 		self._init()
 		self._run()
@@ -39,29 +29,41 @@ class ArtemisAgency:
 		if config.debugLevelEnabled(config.INFO):
 			print "ArtemisAgency: Initializing"
 
-	def _run(self):
-		while True:
-			self._addToObservations()
-			self._takeAction()
+		for tank in self.server.listFriendlyTanks():
+			self.agents.append(ArtemisAgent())
 
-	def _takeAction(self):
-		predictions = ""
-		while not self.predQueue.empty():
-			predictions = self.predQueue.get()
-		if predictions != "":
+
+	def _run(self):
+		nextObserve = time.time()
+		prediction = ""
+
+		while True:
+			nextObserve += self.interval
+			self._addToObservations()
+
+			while time.time() < nextObserve:
+				while not self.predQueue.empty():
+					prediction = self.predQueue.get()[0]
+				self._takeAction(prediction)
+
+
+	def _takeAction(self, prediction):
+		if prediction != "":
 			if config.debugLevelEnabled(config.DEBUG):
-				print "ArtemisAgency: {}".format(predictions[0])
+				print "ArtemisAgency: Enemy predicted at {}".format(prediction)
+
+			tanks = self.server.listFriendlyTanks()
+			for i in xrange(len(self.agents)):
+				action = self.agents[i].aim(prediction, tanks[i])
+				if action[0] == "turn":
+					self.server.setTurnRate(i, action[1])
+				elif action[0] == "shoot":
+					self.server.shoot(i)
+
 
 	def _addToObservations(self):
-		now = time.time()
-
 		if config.debugLevelEnabled(config.DEBUG):
 			print 'ArtemisAgency: observing'
 
-		next_wakeup = now + self.interval
 		observations = self.server.listEnemyTanks()
 		self.obsQueue.put(observations)
-		sleepLength = next_wakeup - time.time()
-
-		time.sleep(sleepLength)
-	
