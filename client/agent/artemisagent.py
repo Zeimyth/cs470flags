@@ -9,23 +9,18 @@ from math import atan2, degrees, copysign
 class ArtemisAgent:
 
 	def __init__(self):
-		self.degreesToTurn = 0
-		self.startAngle = 999
+		pass
 
 
 	def aim(self, target, status):
 		if config.debugLevelEnabled(config.DEBUG):
 			print "ArtemisAgent: my angle"
 			print degrees(status.angle)
-		if self.startAngle == 999:
-			self.startAngle = degrees(status.angle)
 		newAngle = self._calculateAngle((status.x, status.y), target)
 		turnRate = self._calcTurn(newAngle, degrees(status.angle))
 		if turnRate != 0:
 			return tuple(["turn", turnRate])
 		else:
-			self.degreesToTurn = 0
-			self.startAngle = 999
 			return tuple(["shoot"])
 
 
@@ -37,8 +32,6 @@ class ArtemisAgent:
 
 
 	def _calcTurn(self, newAngle, myAngle):
-		if self.degreesToTurn == 0:
-			self.degreesToTurn = newAngle - myAngle
 		angle = newAngle - myAngle
 		if angle > 180:
 			angle -= 360
